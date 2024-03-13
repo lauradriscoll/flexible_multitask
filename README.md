@@ -26,17 +26,17 @@ pip install -r requirements.txt
 
 ## Usage
 
-- `train_model.py`: This script trains the recurrent neural network models on the specified multitask learning problem. You can specify various parameters such as network architecture, learning rate, batch size, etc., through command-line arguments.
+- `stepnet`: Code for training networks with random initializations.
 
-- `evaluate_model.py`: After training the models using `train_model.py`, you can use this script to evaluate the performance of the trained models on held-out test data. It computes relevant metrics and generates visualizations for analysis.
+- `transfer_learn`: Code for training networks starting from a pretrained network.
 
-- `utils.py`: This script contains utility functions used across different parts of the codebase, such as data loading, preprocessing, etc.
+- `utils`: This folder contains utility functions used across different parts of the codebase, such as data preprocessing, etc.
 
-- analysis folder: Reproduces figures in paper using data from, XXX
+- `analysis`: Reproduces figures in paper using open source data.
 
 ## Data
 
-The data used in the experiments are not included in this repository due to size constraints. However, instructions for obtaining the data and preparing it for use with the code can be found in the `data/README.md` file.
+The data used in the experiments are not included in this repository due to size constraints. However, data will be made available through the Allen Institute.
 
 ## Citation
 
