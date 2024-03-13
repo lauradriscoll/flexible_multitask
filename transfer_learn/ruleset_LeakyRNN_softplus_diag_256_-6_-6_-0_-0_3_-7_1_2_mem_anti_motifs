@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH --job-name=ruleset      # create a short name for your job
+#SBATCH --nodes=1                # node count
+#SBATCH --ntasks=1               # total number of tasks across all nodes
+#SBATCH --cpus-per-task=1        # cpu-cores per task (>1 if multi-threaded tasks)
+#SBATCH --mem=8G                 # total memory (RAM) per node
+#SBATCH --time=12:00:00
+#SBATCH -c 1
+ml python/2.7.13
+module load py-scipystack/1.0_py27 py-tensorflow/1.9.0_py27
+srun python ruleset.py LeakyRNN softplus diag 256 -6 -6 -0 -0 3 -7 1 2 mem_anti_motifs
+deactivate
