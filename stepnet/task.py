@@ -23,9 +23,6 @@ rules_dict = \
     'untrained' : ['fdgo', 'reactgo', 'delaygo', 'fdanti', 'reactanti', 'delayanti',
               'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
               'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #15
-    'arm' : ['fdgo', 'reactgo', 'delaygo', 'fdanti', 'reactanti', 'delayanti',
-              'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
-              'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #15
     'mante' : ['contextdm1', 'contextdm2', 'multidm'], #3
     'delay' : ['fdgo', 'delaygo', 'fdanti', 'delayanti', 'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm'], #9
     'memory' : ['delaygo', 'delayanti', 'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm'], #7
@@ -45,7 +42,6 @@ rules_dict = \
 np_load_old = np.load
 # modify the default parameters of np.load
 np.load = lambda *a,**k: np_load_old(*a, allow_pickle=True, **k)
-emg_dict = np.load(p+'/code/multitask-nets/stepnet/data/rnn/multitask/armNet/emg_dict_800.npy').item() #interpolated arm dict from frank
 
 # Store indices of rules
 rule_index_map = dict()
@@ -152,24 +148,9 @@ class Trial(object):
 
             elif loc_type == 'fix_out':
                 self.y[ons[i]: offs[i], i, 0] = 0.8
-                if self.config['ruleset'] == 'arm':
-                    total_inds = np.shape(self.y[ons[i]:offs[i],i,1:])[0]
-                    max_inds = 50
-                    min_inds = 0
-                    inds = np.linspace(min_inds,max_inds,total_inds).astype(int) 
-                    #normalize out so they're all equally weigthed during training
-                    out_max = np.max(np.max(emg_dict['outputs'],axis = 0),axis = 0) 
-                    self.y[ons[i]: offs[i], i, 1:] = emg_dict['outputs'][0,inds,:]*(1/out_max) 
-                    
+
             elif loc_type == 'out':
-                if self.config['ruleset'] == 'arm':
-                    total_inds = np.shape(self.y[ons[i]:offs[i],i,1:])[0]
-                    max_inds = 149
-                    min_inds = 50
-                    inds = np.linspace(min_inds,max_inds,total_inds).astype(int)    
-                    self.y[ons[i]:offs[i],i,1:] += self.add_y_loc(locs[i])[inds,:]
-                else:
-                    self.y[ons[i]: offs[i], i, 1:] += self.add_y_loc(locs[i])#*strengths[i] #output shouldn't be modulated by strength 20220125
+                elf.y[ons[i]: offs[i], i, 1:] += self.add_y_loc(locs[i])#*strengths[i] #output shouldn't be modulated by strength 20220125
                 
                 self.y_loc[ons[i]: offs[i], i] = locs[i]
             else:
@@ -233,13 +214,7 @@ class Trial(object):
 
     def add_y_loc(self, y_loc):
         """Target response given location."""
-        if self.config['ruleset'] == 'arm':
-            t = np.argmin(get_dist(emg_dict['targ_theta']-y_loc))
-            #normalize out so they're all equally weigthed during training
-            out_max = np.max(np.max(emg_dict['outputs'],axis = 0),axis = 0)
-            y = emg_dict['outputs'][t,:,:]*(1/out_max)
-        else:
-            y = np.array((np.sin(y_loc), np.cos(y_loc)))
+        y = np.array((np.sin(y_loc), np.cos(y_loc)))
         return y
 
 
