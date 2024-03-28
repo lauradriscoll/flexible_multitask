@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: flexmult
+Version: 1.0
+Requires-Dist: h5py
+Requires-Dist: scikit-learn
+Requires-Dist: matplotlib
+Requires-Dist: jupyterlab
+Requires-Dist: tensorflow
+Requires-Dist: python-dotenv

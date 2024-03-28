@@ -4,23 +4,17 @@ from __future__ import division
 import six
 import numpy as np
 import tensorflow as tf
-import os
 
 from datetime import datetime as datetime
 
-from pathlib import Path
-import dotenv
-dotenv.load_dotenv()
-p = Path(os.environ.get("HOME_DIR"))
-
-# import getpass
-# ui = getpass.getuser()
-# if ui == 'laura':
-#     p = '/home/laura'
-# elif ui == 'lauradriscoll':
-#     p = '/Users/lauradriscoll/Documents'
-# elif ui == 'lndrisco':
-#     p = '/home/users/lndrisco'
+import getpass
+ui = getpass.getuser()
+if ui == 'laura':
+    p = '/home/laura'
+elif ui == 'lauradriscoll':
+    p = '/Users/lauradriscoll/Documents'
+elif ui == 'lndrisco':
+    p = '/home/users/lndrisco'
 
 rules_dict = \
     {'all' : ['fdgo', 'reactgo', 'delaygo', 'fdanti', 'reactanti', 'delayanti',
@@ -1139,9 +1133,9 @@ def generate_trials(rule, hp, mode, noise_on=True, **kwargs):
     if 'replace_rule' in kwargs:
         rule = kwargs['replace_rule']
 
-    # if rule is 'testinit':
-    #     # Add no rule
-    #     return trial
+    if rule is 'testinit':
+        # Add no rule
+        return trial
 
     if isinstance(rule, six.string_types):
         # rule is not iterable
