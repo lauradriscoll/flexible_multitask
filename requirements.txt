@@ -1,6 +1,6 @@
-h5py
-scikit-learn
-matplotlib
-jupyterlab
-tensorflow
-python-dotenv
+#h5py
+#scikit-learn
+#matplotlib
+#jupyterlab
+#tensorflow
+#python-dotenv
