@@ -4,6 +4,7 @@
 #jupyterlab
 #tensorflow
 #python-dotenv
+adjustText
 absl-py==0.8.1
 appnope==0.1.0
 astor==0.6.2

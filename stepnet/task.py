@@ -3,7 +3,8 @@
 from __future__ import division
 import six
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import os
 
 from datetime import datetime as datetime
@@ -13,37 +14,28 @@ import dotenv
 dotenv.load_dotenv()
 p = Path(os.environ.get("HOME_DIR"))
 
-# import getpass
-# ui = getpass.getuser()
-# if ui == 'laura':
-#     p = '/home/laura'
-# elif ui == 'lauradriscoll':
-#     p = '/Users/lauradriscoll/Documents'
-# elif ui == 'lndrisco':
-#     p = '/home/users/lndrisco'
-
 rules_dict = \
     {'all' : ['fdgo', 'reactgo', 'delaygo', 'fdanti', 'reactanti', 'delayanti',
               'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
               'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #15
-    'untrained' : ['fdgo', 'reactgo', 'delaygo', 'fdanti', 'reactanti', 'delayanti',
-              'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
-              'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #15
-    'mante' : ['contextdm1', 'contextdm2', 'multidm'], #3
-    'delay' : ['fdgo', 'delaygo', 'fdanti', 'delayanti', 'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm'], #9
-    'memory' : ['delaygo', 'delayanti', 'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm'], #7
-    'react' : ['reactgo', 'reactanti', 'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #6
-    'anti' : ['fdanti', 'reactanti', 'delayanti', 'dmsnogo', 'dmcnogo'], #5
-    'match' : ['dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #4
-    'category' : ['dmcgo', 'dmcnogo'], #2
-    'delaypro_anti' : ['fdgo','fdanti'], #2
-    'pro_big' : ['fdgo', 'reactgo', 'delaygo',
-              'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
-              'dmsgo', 'dmcgo'], #10
+    # 'untrained' : ['fdgo', 'reactgo', 'delaygo', 'fdanti', 'reactanti', 'delayanti',
+    #           'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
+    #           'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #15
+    # 'mante' : ['contextdm1', 'contextdm2', 'multidm'], #3
+    # 'delay' : ['fdgo', 'delaygo', 'fdanti', 'delayanti', 'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm'], #9
+    # 'memory' : ['delaygo', 'delayanti', 'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm'], #7
+    # 'react' : ['reactgo', 'reactanti', 'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #6
+    # 'anti' : ['fdanti', 'reactanti', 'delayanti', 'dmsnogo', 'dmcnogo'], #5
+    # 'match' : ['dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #4
+    # 'category' : ['dmcgo', 'dmcnogo'], #2
+    # 'delaypro_anti' : ['fdgo','fdanti'], #2
+    # 'pro_big' : ['fdgo', 'reactgo', 'delaygo',
+    #           'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
+    #           'dmsgo', 'dmcgo'], #10
     'mem_anti_motifs' : ['delaygo','fdanti'],
-    'mem_motifs_small' : ['delaygo','delayanti'],
-    'pro_small' : ['fdgo','delaygo'],
-    'irrel_anti' : ['reactgo','dmcgo']} #2
+    'mem_motifs_small' : ['delaygo','delayanti']}
+    # 'pro_small' : ['fdgo','delaygo'],
+    # 'irrel_anti' : ['reactgo','dmcgo'] #2
 
 np_load_old = np.load
 # modify the default parameters of np.load
@@ -156,7 +148,7 @@ class Trial(object):
                 self.y[ons[i]: offs[i], i, 0] = 0.8
 
             elif loc_type == 'out':
-                elf.y[ons[i]: offs[i], i, 1:] += self.add_y_loc(locs[i])#*strengths[i] #output shouldn't be modulated by strength 20220125
+                self.y[ons[i]: offs[i], i, 1:] += self.add_y_loc(locs[i])#*strengths[i] #output shouldn't be modulated by strength 20220125
                 
                 self.y_loc[ons[i]: offs[i], i] = locs[i]
             else:
@@ -1197,7 +1189,7 @@ def generate_datasetTensors(rule, hp, mode, noise_on=True, **kwargs):
     if 'replace_rule' in kwargs:
         rule = kwargs['replace_rule']
 
-    if rule is 'testinit':
+    if rule == 'testinit':
         # Add no rule
         return trial
 
