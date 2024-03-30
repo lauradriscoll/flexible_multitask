@@ -18,24 +18,7 @@ rules_dict = \
     {'all' : ['fdgo', 'reactgo', 'delaygo', 'fdanti', 'reactanti', 'delayanti',
               'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
               'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #15
-    # 'untrained' : ['fdgo', 'reactgo', 'delaygo', 'fdanti', 'reactanti', 'delayanti',
-    #           'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
-    #           'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #15
-    # 'mante' : ['contextdm1', 'contextdm2', 'multidm'], #3
-    # 'delay' : ['fdgo', 'delaygo', 'fdanti', 'delayanti', 'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm'], #9
-    # 'memory' : ['delaygo', 'delayanti', 'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm'], #7
-    # 'react' : ['reactgo', 'reactanti', 'dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #6
-    # 'anti' : ['fdanti', 'reactanti', 'delayanti', 'dmsnogo', 'dmcnogo'], #5
-    # 'match' : ['dmsgo', 'dmsnogo', 'dmcgo', 'dmcnogo'], #4
-    # 'category' : ['dmcgo', 'dmcnogo'], #2
-    # 'delaypro_anti' : ['fdgo','fdanti'], #2
-    # 'pro_big' : ['fdgo', 'reactgo', 'delaygo',
-    #           'delaydm1', 'delaydm2', 'contextdelaydm1', 'contextdelaydm2', 'multidelaydm',
-    #           'dmsgo', 'dmcgo'], #10
-    'mem_anti_motifs' : ['delaygo','fdanti'],
     'mem_motifs_small' : ['delaygo','delayanti']}
-    # 'pro_small' : ['fdgo','delaygo'],
-    # 'irrel_anti' : ['reactgo','dmcgo'] #2
 
 np_load_old = np.load
 # modify the default parameters of np.load
