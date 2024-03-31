@@ -21,7 +21,11 @@ git clone https://github.com/lauradriscoll/flexible_multitask.git
 2. Install the required dependencies:
 
 ```
-pip install -r requirements.txt
+git clone https://github.com/lauradriscoll/flexible_multitask.git
+conda create --name flex_mult python=3.10
+conda activate flex_mult
+cd flexible_multitask
+pip install -e .
 ```
 
 ## Usage
