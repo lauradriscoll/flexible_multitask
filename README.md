@@ -6,8 +6,8 @@ This repository contains the code associated with the paper titled "Flexible Mul
 
 ## Requirements
 
-- Python (2.7.5)
-- TensorFlow (1.10.0)
+- Python (3.10)
+- TensorFlow (2)
 - Other dependencies as specified in the requirements.txt file
 
 ## Installation
@@ -21,7 +21,6 @@ git clone https://github.com/lauradriscoll/flexible_multitask.git
 2. Install the required dependencies:
 
 ```
-git clone https://github.com/lauradriscoll/flexible_multitask.git
 conda create --name flex_mult python=3.10
 conda activate flex_mult
 cd flexible_multitask
