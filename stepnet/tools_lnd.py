@@ -2871,7 +2871,6 @@ def interp3d(m,D_use,rule_set,epoch_set,t_set,script_name = 'interp_tasks_small_
         os.makedirs(fig_fldr)
 
     plt.savefig(os.path.join(figpath,fig_fldr,tit_name+'.pdf'),bbox_inches='tight')
-    plt.savefig(os.path.join(figpath,fig_fldr,tit_name+'.png'))
     plt.show()
 
 def gen_stim_trial_set(m,ri_set):
@@ -3926,6 +3925,19 @@ def find_fp_dst_subspaces(m, D_use, trial_set, epoch_set, rule_set, trial_num, q
 
 def plot_var_in(m,D_use,rule_str,epoch_set,figpath,script_name,rule_axs,axs = 'pca_h_cat'):
 
+    """
+    This function plots the variance of the data projected onto the first two principal components
+    and another visualized space.
+
+    Args:
+    m: The model to use.
+    rule_str: The rule string to use.
+    epoch_set: The epoch set to use.
+    figpath: The filepath to save the figure.
+    script_name: The name of the script.
+    axs: The axis to use for saving the figure ('pca_h' or 'all').
+    """
+
     fig = plt.figure(figsize=(3.2,1.8),tight_layout=True,facecolor='white')
     ax = plt.subplot(1,1,1)
     color_set = ['orangered','dodgerblue']
@@ -3951,13 +3963,11 @@ def plot_var_in(m,D_use,rule_str,epoch_set,figpath,script_name,rule_axs,axs = 'p
         plt.plot(proj_in[:,1],':',c = color_set[ri],label = 'y',alpha = .8,linewidth = lw)
         for pc in range(n_components):
             plt.plot(proj_tot[:,pc],'-',c = color_set[ri],label = 'sum total',alpha = .4,linewidth = lw/3)
-    # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.4),
-    #           fancybox=True, shadow=True, ncol=3)
+
     plt.ylabel('Variance')
     plt.xlabel('Time in Epoch')
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
-    # ax.spines['bottom'].set_visible(False)
 
     fig_fldr = 'plot_var_in'
     if not os.path.exists(os.path.join(figpath,fig_fldr,script_name)):
