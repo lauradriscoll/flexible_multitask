@@ -989,6 +989,45 @@ def same_mov_inds_py3(trial_master, trial_temp):
 
     return trial_temp_new
 
+def init_from_other_task(m,ri_set,init_from):
+
+    rule1 = rules_dict['all'][ri_set[0]]
+    rule2 = rules_dict['all'][ri_set[1]]
+    trial1 = gen_trials_from_model_dir(m,rule1,mode='test',noise_on = False)
+    trial2 = gen_trials_from_model_dir(m,rule2,mode='test',noise_on = False)
+    trial2 = same_mov_inds_py3(trial1, trial2) 
+    trial1 = gen_trials_from_model_dir(m,rule1,mode='test',noise_on = False)
+
+    trial_set = [trial1,trial2]
+    
+    model = Model(m)
+    with tf.Session() as sess:
+        model.restore()
+        model._sigma=0
+        var_list = model.var_list
+        params = [sess.run(var) for var in var_list]
+        hparams = model.hp
+
+    epoch = 'go1'
+    B = np.shape(trial1.x)[1]
+    N = hparams['n_rnn']
+
+    _,h = gen_X_from_model_dir(m,trial_set[init_from])
+    T1_inds = get_T_inds(trial1,epoch)
+    T2_inds = get_T_inds(trial2,epoch)
+
+    y_hat = np.zeros((len(T1_inds),B,3))
+    for ti in range(B):
+
+        h0 = h[:,ti,T2_inds[0]-2]
+        x_t = trial1.x[T1_inds[1:],ti,:]
+        h_t = vanilla_run_with_h0(params, x_t, h0, hparams)
+        offset = np.repeat(params[3][:,np.newaxis],np.shape(h_t.T)[1],axis = 1)
+        y_hat[:,ti,:] = (np.dot(params[2].T,h)+offset).T
+
+    y_loc = trial1.y_loc[T1_inds,:]
+    return get_perf(y_hat, y_loc)
+
 def project_to_output(model_dir_all,X):
     w_in, b_in, w_out, b_out = get_model_params(model_dir_all)
     y = np.dot(X.T, w_out) + b_out
@@ -3168,38 +3207,38 @@ def interp_h_tasks_w_context(m, ri_set,trial_set,epoch_list,D_use = [],n_trials 
 
 from network import get_perf
 
-def init_from_other_task(m,params,hparams,ri_set,init_from,run_from,trial_offset = 0,mov = True):
+# def init_from_other_task(m,params,hparams,ri_set,init_from,run_from,trial_offset = 0,mov = True):
 
-    if mov==False:
-        rule1 = rules_dict['all'][ri_set[0]]
-        trial1 = gen_trials_from_model_dir(m,rule1,mode='test',noise_on = False)
-        trial2 = same_stim_trial(trial1, ri_set[1]) 
-        trial1 = gen_trials_from_model_dir(m,rule1,mode='test',noise_on = False)
-    else:
-        trial_set = gen_mov_trial_set(m,ri_set)
+#     if mov==False:
+#         rule1 = rules_dict['all'][ri_set[0]]
+#         trial1 = gen_trials_from_model_dir(m,rule1,mode='test',noise_on = False)
+#         trial2 = same_stim_trial(trial1, ri_set[1]) 
+#         trial1 = gen_trials_from_model_dir(m,rule1,mode='test',noise_on = False)
+#     else:
+#         trial_set = gen_mov_trial_set(m,ri_set)
 
 
-    trial_set = [trial1,trial2]
+#     trial_set = [trial1,trial2]
 
-    rule = rules_dict['all'][ri_set[run_from]]
-    trial = trial_set[run_from]
-    epoch = 'go1'
-    B = np.shape(trial.x)[1]
-    N = hparams['n_rnn']
+#     rule = rules_dict['all'][ri_set[run_from]]
+#     trial = trial_set[run_from]
+#     epoch = 'go1'
+#     B = np.shape(trial.x)[1]
+#     N = hparams['n_rnn']
 
-    _,h = gen_X_from_model_dir(m,trial_set[init_from])
-    T_inds = get_T_inds(trial,epoch)
+#     _,h = gen_X_from_model_dir(m,trial_set[init_from])
+#     T_inds = get_T_inds(trial,epoch)
 
-    y_hat = np.zeros((len(T_inds),B,3))
-    for ti in range(B):
+#     y_hat = np.zeros((len(T_inds),B,3))
+#     for ti in range(B):
 
-        h0 = h[:,(ti+trial_offset)%B,T_inds[0]]
-        x_t = trial.x[T_inds[1:],ti,:]
-        h_t = vanilla_run_with_h0(params, x_t, h0, hparams)
-        y_hat[:,ti,:] = out_affine(params, h_t.T).T
+#         h0 = h[:,(ti+trial_offset)%B,T_inds[0]]
+#         x_t = trial.x[T_inds[1:],ti,:]
+#         h_t = vanilla_run_with_h0(params, x_t, h0, hparams)
+#         y_hat[:,ti,:] = out_affine(params, h_t.T).T
 
-    y_loc = trial.y_loc[T_inds,:]
-    return get_perf(y_hat, y_loc)
+#     y_loc = trial.y_loc[T_inds,:]
+#     return get_perf(y_hat, y_loc)
 
 
 def var_ex_X_task(ax, m, rule_set, epoch_set, n_components = 200, batch_size = 1000, plot_legend = False):
