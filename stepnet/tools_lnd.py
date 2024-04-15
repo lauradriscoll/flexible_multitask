@@ -59,6 +59,17 @@ task_name_dict['Ctx Dly DM 2'] = rule_set_names[9]
 task_name_dict['Ctx Dly DM 1'] = rule_set_names[8]
 task_name_dict['MultSen Dly DM'] = rule_set_names[10]
 
+def load_X_from_model_dir(model_dir,rule, mode = 'test',noise = False,alpha_mod1 = 0):    
+    model = Model(model_dir)
+    with tf.Session() as sess:
+        model.restore()
+        hparams = model.hp
+        trial = generate_trials(rule, hparams, mode=mode, batch_size = 20, noise_on=noise, delay_fac =1,alpha_mod1 = alpha_mod1)
+        feed_dict = tools.gen_feed_dict(model, trial, hparams)
+        h_tf, y_hat = sess.run([model.h, model.y_hat], feed_dict=feed_dict) #(n_time, n_condition, n_neuron)
+            
+    return h_tf, y_hat, hparams, trial
+
 def gen_trials_from_model_dir(model_dir,rule,mode='test',noise_on = True,batch_size = 500):
     model = Model(model_dir)
     with tf.Session() as sess:
@@ -207,25 +218,97 @@ def make_lil_axes(ax,axes_labels,fontsize = 20,fac_len = 10):
     ax.set_xticks([])
 
 def plot_training_history(m,rule_trains):
-    
-    fig = plt.figure(figsize=(5, 5))
-    cmap=plt.get_cmap('Greys')
+
+    fig = plt.figure(figsize=(10, 5))
     fname = os.path.join(m, 'log.json')
-    
+
     with open(fname, 'r') as f:
         log_all = json.load(f)
-    for ri in range(len(rule_trains)):
-        r = rule_trains[ri]
-        c = cmap((ri+1)/(len(rule_trains)+1))
-        ax = fig.add_subplot(1,1,1)
-        x = np.log(log_all['cost_'+r])
-        plt.plot(x,'-',c = c)
-        ax.set_xlabel('Training Step (x 1000)')
-        ax.set_ylabel('Log Cost [for each task]')
-        plt.ylim([-6,2])
-        
-    plt.title(m)
-    plt.show()   
+
+    # Create the figure and subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 3))
+
+    # Define a colormap for each task
+    cmap = plt.cm.get_cmap('Greys')
+
+    # Plot cost and performance for each rule
+    for i, rule in enumerate(rule_trains):
+        color = cmap(i+1 / (len(rule_trains) + 2))  # Normalize color index
+
+        ax1.plot(np.log(log_all['cost_'+rule]), '-', color=color, alpha=0.5, label=rule)
+        ax2.plot(log_all['perf_'+rule], '-', color=color, alpha=0.5, label=rule)
+
+    # Set axis labels and title
+    ax1.set_xlabel('Training Step (x 1000)')
+    ax1.set_ylabel('Log Cost [for each task]')
+    ax2.set_xlabel('Training Step (x 1000)')
+    ax2.set_ylabel('Performance [for each task]')
+
+    # Add legend
+    ax2.legend()
+
+    # Show the plot
+    plt.tight_layout()
+    plt.show()
+
+def plot_var_x_epoch(m, tick_labels, figpath, n_components = 256, timing_sort=True, sum_dims = 2, cmap = 'cividis', fontsize = 14):
+    var_test_sort, tick_labels, keys = var_x_epoch(m, n_components = n_components, timing_sort=timing_sort)
+    
+    fig = plt.figure(figsize=(4,2),tight_layout=True,facecolor='white')
+    ax = plt.subplot(111)
+    
+    im = plt.imshow(np.sum(var_test_sort[:,:,:sum_dims],axis = 2),cmap = cmap)
+    
+    ax.set_yticks(range(len(var_test_sort)))
+    ax.set_yticklabels(tick_labels, fontsize = fontsize)
+    ax.set_xticks([])
+    plt.title('Fraction var. in first '+ str(sum_dims) + ' dim', fontsize = fontsize)
+    
+    cbar = plt.colorbar(im, ticks=[ 0,.5, 1])
+    cbar.ax.set_yticklabels(['0', '0.5', '1'], fontsize = fontsize)
+    cbar.ax.tick_params(labelsize=fontsize)
+    plt.clim(0, 1) 
+    
+    ax.set_xlabel('Test', fontsize = fontsize)
+    ax.set_ylabel('Fit', fontsize = fontsize)
+    
+    cbar.outline.set_visible(False)
+    remove_spines(ax)
+    
+    plt.savefig(os.path.join(figpath,'var_test_sort_random'+'.pdf'),bbox_inches='tight')
+    plt.show()
+
+    return var_test_sort
+
+def plot_var_cumsum(var_test_sort, tick_labels, figpath, 
+                    n_dims = 11, 
+                    cmap = ['k','orange','dodgerblue','mediumseagreen',],
+                    fontsize = 14):
+
+    fig = plt.figure(figsize=(4,2),tight_layout=True,facecolor='white')
+    ax1 = plt.subplot(111)
+    
+    for x in range(0,len(var_test_sort)):
+        ax1.plot(np.cumsum(var_test_sort[x,x,:]),'.-',label = tick_labels[x],
+                 c = cmap[x],alpha = .6,linewidth = 2,markersize = 13)
+           
+    ax1.set_xlabel('N PCs', fontsize = fontsize)
+    ax1.set_ylabel('Var Expl.', fontsize = fontsize)
+    
+    ax1.spines['top'].set_visible(False)
+    ax1.spines['right'].set_visible(False)
+    
+    ax1.set_xlim([-1,n_dims-.5])
+    ax1.set_ylim([-.1,1.1])
+    ax1.tick_params(axis='x', labelsize=fontsize)
+    ax1.tick_params(axis='y', labelsize=fontsize)
+    
+    plt.legend(bbox_to_anchor=(1.05, .95), fontsize = fontsize)
+    
+    plt.savefig(os.path.join(figpath,'var_skree_random'+'.pdf'),bbox_inches='tight')
+    plt.show()
+
+    return n_dims
 
 def make_axes_nice(ax,t_len,trial_f,x_ax_label=False,plot_divisions=True,ylims = [-1,1],label = [],label_y = -1):
     remove_ax_lines(ax)
@@ -989,6 +1072,10 @@ def same_mov_inds_py3(trial_master, trial_temp):
 
     return trial_temp_new
 
+# def out_affine(params, h):
+#     offset = np.repeat(params[3][:,np.newaxis],np.shape(h)[1],axis = 1)
+#     return np.dot(params[2].T,h)+offset
+
 def init_from_other_task(m,ri_set,init_from):
 
     rule1 = rules_dict['all'][ri_set[0]]
@@ -1022,8 +1109,7 @@ def init_from_other_task(m,ri_set,init_from):
         h0 = h[:,ti,T2_inds[0]-2]
         x_t = trial1.x[T1_inds[1:],ti,:]
         h_t = vanilla_run_with_h0(params, x_t, h0, hparams)
-        offset = np.repeat(params[3][:,np.newaxis],np.shape(h_t.T)[1],axis = 1)
-        y_hat[:,ti,:] = (np.dot(params[2].T,h)+offset).T
+        y_hat[:,ti,:] = out_affine(params, h_t.T).T
 
     y_loc = trial1.y_loc[T1_inds,:]
     return get_perf(y_hat, y_loc)
