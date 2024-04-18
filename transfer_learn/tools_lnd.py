@@ -39,7 +39,24 @@ from mpl_toolkits.mplot3d import Axes3D
 rule_set_names = ['DelayPro', 'ReactPro', 'MemoryPro', 'DelayAnti', 'ReactAnti', 'MemoryAnti',
               'IntegrationModality1', 'IntegrationModality2', 'CtxtIntModality1', 'CtxtIntModality2', 'IntegrationMultimodal',
               'ReactMatch2Sample', 'ReactNonMatch2Sample', 'ReactCategoryPro', 'ReactCategoryAnti']
-              
+
+task_name_dict = {}
+task_name_dict['Dly Anti'] = rule_set_names[5]
+task_name_dict['RT Go'] = rule_set_names[1]
+task_name_dict['Dly Go'] = rule_set_names[2]
+task_name_dict['RT Anti'] = rule_set_names[4]
+task_name_dict['Anti'] = rule_set_names[3]
+task_name_dict['Go'] = rule_set_names[0]
+task_name_dict['DNMS'] = rule_set_names[12]
+task_name_dict['DMS'] = rule_set_names[11]
+task_name_dict['DMC'] = rule_set_names[13]
+task_name_dict['DNMC'] = rule_set_names[14]
+task_name_dict['Dly DM 2'] = rule_set_names[7]
+task_name_dict['Dly DM 1'] = rule_set_names[6]
+task_name_dict['Ctx Dly DM 2'] = rule_set_names[9]
+task_name_dict['Ctx Dly DM 1'] = rule_set_names[8]
+task_name_dict['MultSen Dly DM'] = rule_set_names[10]
+        
 def remove_spines(ax):
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
