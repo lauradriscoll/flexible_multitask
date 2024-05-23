@@ -4043,7 +4043,6 @@ def find_fp_dst_subspaces(m, D_use, trial_set, epoch_set, rule_set, trial_num, q
         os.makedirs(os.path.join(figpath,fig_fldr,script_name))
 
     plt.savefig(os.path.join(figpath,fig_fldr,script_name,tit_name+'.pdf'),bbox_inches='tight')
-    plt.savefig(os.path.join(figpath,fig_fldr,script_name,tit_name+'.png'))
     plt.show()
 
     return diff_rel_fp, diff_rel_fp_in, diff_rel_fp_out,f
