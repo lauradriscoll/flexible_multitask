@@ -74,7 +74,7 @@ class Analysis(object):
         # If not computed, use variance.py
         fname = os.path.join(model_dir, 'variance_' + data_type + '.pkl')
         res = tools.load_pickle(fname)
-        h_var_all_ = res['h_var_end']#res['h_var_all']
+        h_var_all_ = res['h_var_all'] #res['h_var_end']#
         self.keys  = res['keys']
 
         # First only get active units. Total variance across tasks larger than 1e-3

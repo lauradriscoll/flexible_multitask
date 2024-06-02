@@ -1072,9 +1072,9 @@ def same_mov_inds_py3(trial_master, trial_temp):
 
     return trial_temp_new
 
-# def out_affine(params, h):
-#     offset = np.repeat(params[3][:,np.newaxis],np.shape(h)[1],axis = 1)
-#     return np.dot(params[2].T,h)+offset
+def out_affine_timeseries(params, h):
+    offset = np.repeat(params[3][:,np.newaxis],np.shape(h)[1],axis = 1)
+    return np.dot(params[2].T,h)+offset
 
 def init_from_other_task(m,ri_set,init_from):
 
@@ -1109,7 +1109,7 @@ def init_from_other_task(m,ri_set,init_from):
         h0 = h[:,ti,T2_inds[0]-2]
         x_t = trial1.x[T1_inds[1:],ti,:]
         h_t = vanilla_run_with_h0(params, x_t, h0, hparams)
-        y_hat[:,ti,:] = out_affine(params, h_t.T).T
+        y_hat[:,ti,:] = out_affine_timeseries(params, h_t.T).T
 
     y_loc = trial1.y_loc[T1_inds,:]
     return get_perf(y_hat, y_loc)
