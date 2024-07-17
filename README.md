@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains the code associated with the paper titled "Flexible Multitask Computation in Recurrent Networks Utilizes Shared Dynamical Motifs". The code implements training the recurrent neural network models and the analyses described in the paper. https://www.biorxiv.org/content/10.1101/2022.08.15.503870v1
+This repository contains the code associated with the paper titled "Flexible multitask computation in recurrent networks utilizes shared dynamical motifs". The code implements training the recurrent neural network models and the analyses described in the paper. https://www.nature.com/articles/s41593-024-01668-6
 
 ## Requirements
 
@@ -39,12 +39,10 @@ pip install -e .
 
 ## Data
 
-The data used in the experiments are not included in this repository due to size constraints. However, data will be made available through the Allen Institute.
+Trained networks were deposited on the Allen Institute database at https://codeocean.allenneuraldynamics.org/data-assets/e44a8ae2-255a-40f1-ac77-e7d04975ac8b, and additional processed data to generate all figures, including fixed point locations, were deposited at https://codeocean.allenneuraldynamics.org/data-assets/c4f26da4-73b5-4fb6-a9f2-cba52e3cf400/multitask_processed/.
 
 ## Citation
 
 If you use this code in your research, please cite the following paper:
 
-Flexible multitask computation in recurrent networks utilizes shared dynamical motifs
-Laura Driscoll, Krishna Shenoy, David Sussillo
-bioRxiv 2022.08.15.503870; doi: https://doi.org/10.1101/2022.08.15.503870
+Driscoll, L.N., Shenoy, K. & Sussillo, D. Flexible multitask computation in recurrent networks utilizes shared dynamical motifs. Nat Neurosci 27, 1349–1363 (2024). https://doi.org/10.1038/s41593-024-01668-6
