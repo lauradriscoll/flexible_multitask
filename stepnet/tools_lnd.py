@@ -1,21 +1,14 @@
-from __future__ import division
-
 import os
 import sys
 import time
-from collections import defaultdict
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
+
 import re
 import json
-from datetime import datetime as datetime
-from tensorflow.python.ops import parallel_for as pfor
-from scipy.linalg import orthogonal_procrustes
 from sklearn.decomposition import PCA
-from sklearn.manifold import MDS
-from sklearn.linear_model import LinearRegression
 from sklearn import linear_model
 from numpy import linalg as LA
 import numpy.random as npr
@@ -24,14 +17,14 @@ from sklearn.manifold import MDS
 from scipy.spatial import distance
 from tensorflow.python.ops import parallel_for as pfor
 import absl
+import pylab
 import scipy.cluster.hierarchy as sch
 from scipy.cluster.hierarchy import fcluster
-
 import task
-from task import generate_trials, rule_name, rules_dict
-from network import Model, FixedPoint_Model, get_perf
 import tools
 import train
+from task import generate_trials, rule_name, rules_dict
+from network import Model, FixedPoint_Model, get_perf
 from collections import OrderedDict
 from analysis import clustering, standard_analysis, variance
 from mpl_toolkits.mplot3d import Axes3D
@@ -74,11 +67,8 @@ def gen_trials_from_model_dir(model_dir,rule,mode='test',noise_on = True,batch_s
     model = Model(model_dir)
     with tf.Session() as sess:
         model.restore()
-        # model._sigma=0
         # get all connection weights and biases as tensorflow variables
         var_list = model.var_list
-        # evaluate the parameters after training
-#         params = [sess.run(var) for var in var_list]
         # get hparams
         hparams = model.hp
         # create a trial
@@ -97,7 +87,8 @@ def gen_X_from_model_dir(model_dir,trial,d = [],lesion_units_list = []):
         if len(lesion_units_list)>0:
             model.lesion_units(sess, lesion_units_list)
 
-        # model._sigma=0
+        #turns off noise for analysis
+        model._sigma=0
         # get all connection weights and biases as tensorflow variables
         var_list = model.var_list
         # evaluate the parameters after training
@@ -118,6 +109,7 @@ def gen_X_from_model_dir_epoch(model_dir,trial,epoch,d = []):
         else:
             model.saver.restore(sess,d)
 
+        #turns off noise for analysis
         model._sigma=0
         # get all connection weights and biases as tensorflow variables
         var_list = model.var_list
@@ -449,15 +441,6 @@ def get_model_params(model_dir,ckpt_n_dir = []):
 
     return w_in, b_in, w_out, b_out
 
-# def get_path_names():
-#     import getpass
-#     ui = getpass.getuser()
-#     if ui == 'laura':
-#         p = '/home/laura'
-#     elif ui == 'lauradriscoll':
-#         p = '/Users/lauradriscoll/Documents'
-#     return p
-
 def plot_N(X, D, clist, linewidth = 1, alpha = .5, linestyle = '-', cmap_c = 'hsv',
     markersize = 10, edgecolors = []):
     """Plot activity is some 2D space.
@@ -523,51 +506,6 @@ def plot_N3D(ax, X, D, clist, linewidth = 1, alpha = .5, linestyle = '-', cmap_c
                 c = edgecolors, linewidth = linewidth/2, alpha = alpha)
             ax.scatter(X_trial[-1,0],X_trial[-1,1],X_trial[-1,2],s = markersize,marker ='^',
                 edgecolors = c, c = edgecolors, linewidth = linewidth/2, alpha = alpha)
-
-
-# def plot_FP(X, D, eig_decomps, c='k', al = .2, lw = .5):
-
-#     """Plot activity is some 2D space.
-
-#         Args:
-#             X: Fixed points in #Fps x Neurons
-#             D: Neurons x 2 plotting dims
-    
-#         """
-#     S = np.shape(X)[0]
-#     lf = 7
-#     rf = 7
-#     D = D[:2,:] #reduce dim in >2
-    
-#     for s in range(S):
-        
-#         X_trial = np.dot(X[s,:],D.T)
-        
-#         n_arg = np.argwhere(eig_decomps[s]['evals']>1)+1
-#         if len(n_arg)>0:
-#             for arg in range(np.max(n_arg)):
-#                 rdots = np.dot(np.real(eig_decomps[s]['R'][:, arg]).T,D.T)
-#                 ldots = np.dot(np.real(eig_decomps[s]['L'][:, arg]).T,D.T)
-#                 overlap = np.dot(rdots,ldots.T)
-#                 r = np.concatenate((X_trial - rf*overlap*rdots, X_trial + rf*overlap*rdots),0)
-#                 plt.plot(r[0:4:2],r[1:4:2], c = 'k' ,alpha = .2,linewidth = .5)
-        
-#         n_arg = np.argwhere(eig_decomps[s]['evals']<.3)
-#         if len(n_arg)>0:
-#             for arg in range(np.min(n_arg),len(eig_decomps[s]['evals'])):
-#                 rdots = np.dot(np.real(eig_decomps[s]['R'][:, arg]).T,D.T)
-#                 ldots = np.dot(np.real(eig_decomps[s]['L'][:, arg]).T,D.T)
-#                 overlap = np.dot(rdots,ldots.T)
-#                 r = np.concatenate((X_trial - rf*overlap*rdots, X_trial + rf*overlap*rdots),0)
-#                 plt.plot(r[0:4:2],r[1:4:2],'b',alpha = .2,linewidth = .5)
-
-#         if np.max(eig_decomps[s]['evals'].real)<1:
-#             markerfacecolor = c
-#         else:
-#             markerfacecolor = 'None'
-            
-#         plt.plot(X_trial[0], X_trial[1], 'o', markerfacecolor = markerfacecolor, markeredgecolor = c, markersize = 10, alpha = .5)
-
         
 def plot_FP_jitter_3D(m,D_use,rule,t_num,fp_epoch,sorted_fps,fp_inds,jit_fps=True,
                    xlabel = 'FP set PC1',ylabel = 'FP set PC2',rand_step_coef = 0.1,n_steps = 100,
@@ -1450,13 +1388,6 @@ def generate_Beta_timeseries(h_tf,trial,T_inds,align_group):
             angle_var = stim2_locs[inds_use]
         elif align_group =='go1':
             angle_var = y_loc[inds_use]
-        
-#         if t<trial.epochs['stim2'][0]:
-#             angle_var = stim1_locs[inds_use]
-#         elif t<trial.epochs['go1'][0]:
-#             angle_var = stim2_locs[inds_use]
-#         else:
-#             angle_var = y_loc[inds_use]
 
         y1 = np.expand_dims(np.sin(angle_var),axis = 1)
         y2 = np.expand_dims(np.cos(angle_var),axis = 1)
@@ -2324,11 +2255,6 @@ def take_names(epoch,rule,epoch_axes = [],h_epoch = []):
     
     return epoch_name, rule_name, epoch_axes_name, h_epoch
 
-import scipy
-import pylab
-import scipy.cluster.hierarchy as sch
-from scipy.cluster.hierarchy import fcluster
-
 def find_opt_clust_num(D,Y):
     # Choose number of clusters that maximize silhouette score
     n_clusters = range(3, np.min([len(Y),40]))
@@ -2739,9 +2665,6 @@ def interp2d(m,D_use,rule_set,epoch_set,t_set,script_name = 'interp_tasks_small_
 
                 fp = np.dot(sorted_fps[fp_ind,:],D_use)
 
-                # stability_metric = alpha_max - np.max(eig_decomps[fp_ind]['evals'].real)
-                # stability_metric = np.max((stability_metric,0))
-                # stability_metric = np.min((stability_metric,1))
                 stability_metric = .3
                 facecolors_3d = c
                 facecolors_2d = c
@@ -2880,9 +2803,6 @@ def interp3d(m,D_use,rule_set,epoch_set,t_set,script_name = 'interp_tasks_small_
                 
                 fp = np.dot(sorted_fps[fp_ind,:],D_use)
                 
-                # stability_metric = alpha_max - np.max(eig_decomps[fp_ind]['evals'].real)
-                # stability_metric = np.max((stability_metric,0))
-                # stability_metric = np.min((stability_metric,1))
                 stability_metric = alpha_fp
                 facecolors_3d = c
                 facecolors_2d = c
@@ -3240,9 +3160,6 @@ def interp_h_tasks_w_context(m, ri_set,trial_set,epoch_list,D_use = [],n_trials 
     ax_fps.set_xticklabels([0,.2,.4,.6,.8,1],ha = 'center',fontdict={'fontsize':tick_fontsize})
     ax_fps.set_yticklabels([],{'fontsize':tick_fontsize})
     ax_fps.set_zticklabels([],{'fontsize':tick_fontsize})
-    #     ax_fps.set_xlabel(r"Rule Input $\alpha$",fontsize = 20)
-    #     ax_fps.set_ylabel(r"$\Delta{h}$ along diff "+rule_name1+ '\n vs. '+rule_name2,labelpad = -1,fontsize = 20)
-    #     ax_fps.set_zlabel(r"$\Delta{h}$ along "+rule_name1+' '+r"$h_{\theta = 0}$",labelpad = -1,fontsize = 20)
     ax_fps.set_xlabel(r"Rule Input $\alpha$",fontsize = label_fontsize)
     ax_fps.xaxis.labelpad = 20
     ax_fps.set_ylabel(r"$\Delta{h^{Task2 \ End - Task1 \ End}}$",labelpad = -1,fontsize = label_fontsize)
@@ -3290,42 +3207,6 @@ def interp_h_tasks_w_context(m, ri_set,trial_set,epoch_list,D_use = [],n_trials 
         plt.savefig(os.path.join(fldr,figname+'.pdf'),bbox_inches='tight')
         plt.savefig(os.path.join(fldr,figname+'.png'))
     return
-
-from network import get_perf
-
-# def init_from_other_task(m,params,hparams,ri_set,init_from,run_from,trial_offset = 0,mov = True):
-
-#     if mov==False:
-#         rule1 = rules_dict['all'][ri_set[0]]
-#         trial1 = gen_trials_from_model_dir(m,rule1,mode='test',noise_on = False)
-#         trial2 = same_stim_trial(trial1, ri_set[1]) 
-#         trial1 = gen_trials_from_model_dir(m,rule1,mode='test',noise_on = False)
-#     else:
-#         trial_set = gen_mov_trial_set(m,ri_set)
-
-
-#     trial_set = [trial1,trial2]
-
-#     rule = rules_dict['all'][ri_set[run_from]]
-#     trial = trial_set[run_from]
-#     epoch = 'go1'
-#     B = np.shape(trial.x)[1]
-#     N = hparams['n_rnn']
-
-#     _,h = gen_X_from_model_dir(m,trial_set[init_from])
-#     T_inds = get_T_inds(trial,epoch)
-
-#     y_hat = np.zeros((len(T_inds),B,3))
-#     for ti in range(B):
-
-#         h0 = h[:,(ti+trial_offset)%B,T_inds[0]]
-#         x_t = trial.x[T_inds[1:],ti,:]
-#         h_t = vanilla_run_with_h0(params, x_t, h0, hparams)
-#         y_hat[:,ti,:] = out_affine(params, h_t.T).T
-
-#     y_loc = trial.y_loc[T_inds,:]
-#     return get_perf(y_hat, y_loc)
-
 
 def var_ex_X_task(ax, m, rule_set, epoch_set, n_components = 200, batch_size = 1000, plot_legend = False):
 
