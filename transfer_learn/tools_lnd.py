@@ -2697,11 +2697,8 @@ def interp_h_tasks_w_context(m, ri_set,trial_set,epoch_list,D_use = [],n_trials 
     ax_fps.spines['right'].set_visible(False)
     ax_fps.set_xticks([0,.2,.4,.6,.8,1])
     ax_fps.set_xticklabels([0,.2,.4,.6,.8,1],ha = 'center',fontdict={'fontsize':tick_fontsize})
-    ax_fps.set_yticklabels([],{'fontsize':tick_fontsize})
-    ax_fps.set_zticklabels([],{'fontsize':tick_fontsize})
-    #     ax_fps.set_xlabel(r"Task Input $\alpha$",fontsize = 20)
-    #     ax_fps.set_ylabel(r"$\Delta{h}$ along diff "+rule_name1+ '\n vs. '+rule_name2,labelpad = -1,fontsize = 20)
-    #     ax_fps.set_zlabel(r"$\Delta{h}$ along "+rule_name1+' '+r"$h_{\theta = 0}$",labelpad = -1,fontsize = 20)
+    ax_fps.set_yticklabels([], fontdict={'fontsize': tick_fontsize})
+    ax_fps.set_zticklabels([], fontdict={'fontsize': tick_fontsize})
     ax_fps.set_xlabel(r"Rule Input $\alpha$",fontsize = label_fontsize)
     ax_fps.xaxis.labelpad = 20
     ax_fps.set_ylabel(r"$\Delta{h^{Task2 \ End - Task1 \ End}}$",labelpad = -1,fontsize = label_fontsize)

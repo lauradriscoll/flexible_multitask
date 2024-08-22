@@ -39,7 +39,24 @@ from mpl_toolkits.mplot3d import Axes3D
 rule_set_names = ['DelayPro', 'ReactPro', 'MemoryPro', 'DelayAnti', 'ReactAnti', 'MemoryAnti',
               'IntegrationModality1', 'IntegrationModality2', 'CtxtIntModality1', 'CtxtIntModality2', 'IntegrationMultimodal',
               'ReactMatch2Sample', 'ReactNonMatch2Sample', 'ReactCategoryPro', 'ReactCategoryAnti']
-              
+
+task_name_dict = {}
+task_name_dict['Dly Anti'] = rule_set_names[5]
+task_name_dict['RT Go'] = rule_set_names[1]
+task_name_dict['Dly Go'] = rule_set_names[2]
+task_name_dict['RT Anti'] = rule_set_names[4]
+task_name_dict['Anti'] = rule_set_names[3]
+task_name_dict['Go'] = rule_set_names[0]
+task_name_dict['DNMS'] = rule_set_names[12]
+task_name_dict['DMS'] = rule_set_names[11]
+task_name_dict['DMC'] = rule_set_names[13]
+task_name_dict['DNMC'] = rule_set_names[14]
+task_name_dict['Dly DM 2'] = rule_set_names[7]
+task_name_dict['Dly DM 1'] = rule_set_names[6]
+task_name_dict['Ctx Dly DM 2'] = rule_set_names[9]
+task_name_dict['Ctx Dly DM 1'] = rule_set_names[8]
+task_name_dict['MultSen Dly DM'] = rule_set_names[10]
+        
 def remove_spines(ax):
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -2680,11 +2697,8 @@ def interp_h_tasks_w_context(m, ri_set,trial_set,epoch_list,D_use = [],n_trials 
     ax_fps.spines['right'].set_visible(False)
     ax_fps.set_xticks([0,.2,.4,.6,.8,1])
     ax_fps.set_xticklabels([0,.2,.4,.6,.8,1],ha = 'center',fontdict={'fontsize':tick_fontsize})
-    ax_fps.set_yticklabels([],{'fontsize':tick_fontsize})
-    ax_fps.set_zticklabels([],{'fontsize':tick_fontsize})
-    #     ax_fps.set_xlabel(r"Task Input $\alpha$",fontsize = 20)
-    #     ax_fps.set_ylabel(r"$\Delta{h}$ along diff "+rule_name1+ '\n vs. '+rule_name2,labelpad = -1,fontsize = 20)
-    #     ax_fps.set_zlabel(r"$\Delta{h}$ along "+rule_name1+' '+r"$h_{\theta = 0}$",labelpad = -1,fontsize = 20)
+    ax_fps.set_yticklabels([], fontdict={'fontsize': tick_fontsize})
+    ax_fps.set_zticklabels([], fontdict={'fontsize': tick_fontsize})
     ax_fps.set_xlabel(r"Rule Input $\alpha$",fontsize = label_fontsize)
     ax_fps.xaxis.labelpad = 20
     ax_fps.set_ylabel(r"$\Delta{h^{Task2 \ End - Task1 \ End}}$",labelpad = -1,fontsize = label_fontsize)

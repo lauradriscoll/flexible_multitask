@@ -39,7 +39,7 @@ pip install -e .
 
 ## Data
 
-The data used in the experiments are not included in this repository due to size constraints. However, data will be made available through the Allen Institute.
+Trained networks were deposited on the Allen Institute database at https://codeocean.allenneuraldynamics.org/data-assets/e44a8ae2-255a-40f1-ac77-e7d04975ac8b, and additional processed data to generate all figures, including fixed point locations, were deposited at https://codeocean.allenneuraldynamics.org/data-assets/c4f26da4-73b5-4fb6-a9f2-cba52e3cf400/multitask_processed/.
 
 ## Citation
 
