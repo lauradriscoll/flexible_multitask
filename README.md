@@ -24,6 +24,7 @@ git clone https://github.com/lauradriscoll/flexible_multitask.git
 conda create --name flex_mult python=3.10
 conda activate flex_mult
 cd flexible_multitask
+vim .env [download processed data from links below and update path to data and this repo]
 pip install -e .
 ```
 
