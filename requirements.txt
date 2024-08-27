@@ -5,7 +5,7 @@
 #tensorflow
 #python-dotenv
 adjustText
-absl-py==0.8.1
+absl-py>=0.13.0
 appnope==0.1.0
 astor==0.6.2
 attrs==19.3.0
