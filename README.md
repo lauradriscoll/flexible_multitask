@@ -40,7 +40,7 @@ pip install -e .
 
 ## Data
 
-Trained networks were deposited on the Allen Institute database at https://codeocean.allenneuraldynamics.org/data-assets/e44a8ae2-255a-40f1-ac77-e7d04975ac8b, and additional processed data to generate all figures, including fixed point locations, were deposited at https://codeocean.allenneuraldynamics.org/data-assets/c4f26da4-73b5-4fb6-a9f2-cba52e3cf400/multitask_processed/.
+Trained networks were deposited on the Allen Institute database 'multitask_shared', and additional processed data to generate all figures, including fixed point locations, were deposited at 'multitask_processed' : https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fopen.quiltdata.com%2Fb%2Faind-trained-networks%2Ftree%2F&data=05%7C02%7C%7C304a702ec6e34e8c06b108dce85f3cca%7C32669cd6737f4b398bddd6951120d3fc%7C0%7C0%7C638640742977336536%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=FtBs%2BWI3QWA6rNhy0iUJgGpwTlnE9oI2FGMhbYACdMw%3D&reserved=0
 
 ## Citation
 
